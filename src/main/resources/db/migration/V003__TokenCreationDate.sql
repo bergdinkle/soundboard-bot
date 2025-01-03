@@ -1,0 +1,1 @@
+alter table Users add createdAt datetime not null default now()

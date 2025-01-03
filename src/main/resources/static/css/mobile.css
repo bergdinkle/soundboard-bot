@@ -1,0 +1,60 @@
+@media only screen and (orientation: portrait) {
+    h4 {
+        font-size: 4em;
+        text-align: center;
+    }
+
+    .list-group {
+        flex-wrap: nowrap;
+    }
+
+    .right-container input {
+        font-size: 2.5em !important;
+        border-width: 2px !important;
+        --bs-list-group-border-radius: 0.5rem;
+        margin-right: 20px;
+    }
+
+    .right-container button {
+        font-size: 2.5em !important;
+        --bs-list-group-border-radius: 0.5rem;
+        margin-right: 30px;
+    }
+
+    .list-group-item {
+        max-width: 100%;
+        width: auto;
+        height: 5em;
+        --bs-list-group-border-width: 2px;
+        --bs-list-group-border-radius: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    .list-group-item .custom-button {
+        font-size: 1.8em !important;
+        height: auto;
+    }
+
+    .tags-container {
+        column-gap: 12px;
+        margin-right: 12px;
+    }
+
+    .list-group {
+        padding: 30px;
+    }
+
+    .list-group-item .custom-button img {
+        height: 1.5em;
+        width: 1.5em;
+    }
+
+    .favorite-button {
+        width: 2em;
+        height: 2em;
+    }
+
+    .status-text {
+        display: none;
+    }
+}

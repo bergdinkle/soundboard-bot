@@ -1,0 +1,121 @@
+h4 {
+    margin: 12px;
+}
+.list-group {
+    overflow-x: scroll;
+    padding: 12px;
+    flex-wrap: wrap;
+    max-height: 100%;
+    align-content: flex-start;
+    column-gap: 12px;
+    position: absolute;
+    top: 41px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: auto;
+}
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    width: 600px;
+}
+
+.list-group-item:hover {
+    background: 0;
+}
+
+.custom-button {
+    height: 40px;
+    padding: 0;
+    background: 0;
+    border: 0;
+}
+
+.custom-button:hover {
+    background: whitesmoke;
+}
+
+.play-button {
+    text-align: left;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.play-button img {
+    margin-left: 6px;
+    margin-right: 3px;
+}
+
+.favorite-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    border-left: inherit;
+}
+
+.more-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    border-left: inherit;
+}
+
+.more-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.more-menu-button img {
+    margin-right: 6px;
+}
+
+.tags-container {
+    flex-grow: 1;
+    display: flex;
+    column-gap: 6px;
+    justify-content: flex-end;
+    margin-right: 6px;
+}
+
+.badge {
+    font-size: 0.65em;
+}
+
+.head-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.right-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-right: 12px;
+}
+
+.head-button {
+    margin: 8px 0;
+}
+
+.status-text {
+    white-space: nowrap;
+    width: auto;
+}
+
+.status-text-connected {
+    --bs-body-color: var(--bs-green);
+    --bs-border-color: var(--bs-green);
+}
+
+.status-text-disconnected {
+    --bs-body-color: var(--bs-red);
+    --bs-border-color: var(--bs-red);
+}

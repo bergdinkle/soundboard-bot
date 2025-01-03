@@ -1,0 +1,26 @@
+micronaut:
+  application:
+    name: soundboard-bot
+  caches:
+    token-cache:
+      maximum-size: 50
+      expire-after-access: 10m
+  router:
+    static-resources:
+      static:
+        enabled: true
+        mapping: /static/**
+        paths: "classpath:static"
+
+
+netty:
+  default:
+    allocator:
+      max-order: 3
+
+max-file-size: ${SOUNDBOARD_BOT_MAX_FILE_SIZE:20971520}
+
+flyway:
+  datasources:
+    default:
+      enabled: true
