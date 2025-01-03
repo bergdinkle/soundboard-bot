@@ -7,7 +7,7 @@
 
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
-			"version": "21",
+			"version": "none",
 			"installMaven": "false",
 			"installGradle": "false"
 		}
@@ -17,7 +17,7 @@
 	"forwardPorts": [8080],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
+	"postCreateCommand": "sudo .devcontainer/post-create.sh",
 
 	// Configure tool-specific properties.
 	"customizations": {
