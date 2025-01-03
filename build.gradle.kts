@@ -113,7 +113,6 @@ tasks.named<JavaExec>("run") {
                 if (it.isNotEmpty() && !it.startsWith("#")) {
                     val (key, value) = it.split('=', limit = 2)
                     if (System.getenv(key) == null) {
-                        println("Setting environment variable for $key")
                         environment(key, value)
                     }
                 }
