@@ -49,7 +49,7 @@ dependencies {
     implementation("net.bramp.ffmpeg:ffmpeg:0.8.0")
     implementation("io.swagger.core.v3:swagger-annotations")
 
-    implementation("dev.kord:kord-common:0.14.0")
+    implementation("dev.kord:kord-common:0.15.0")
     implementation("dev.kord:kord-rest:0.14.0")
     implementation("dev.kord:kord-gateway:0.14.0")
     implementation("dev.kord:kord-core:0.14.0")
