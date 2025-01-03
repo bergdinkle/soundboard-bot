@@ -34,7 +34,7 @@ class YouTubeDownloadService(
         return Paths.get(tempFileName)
     }
 
-    private fun runCommand(workingDirectory: String = "/data", command: Array<String>) {
+    private fun runCommand(workingDirectory: String = "/", command: Array<String>) {
         logger.debug { "Run command ${command.joinToString { " " }} in directory $workingDirectory" }
 
         val process = ProcessBuilder()
