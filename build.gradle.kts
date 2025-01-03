@@ -92,8 +92,12 @@ micronaut {
 tasks.named<io.micronaut.gradle.docker.DockerBuildOptions>("dockerfile") {
     editDockerfile {
         after("FROM eclipse-temurin:21-jre-jammy") {
-            insert("RUN apt update && apt install software-properties-common -y && add-apt-repository ppa:tomtomtom/yt-dlp && apt update && apt install ffmpeg yt-dlp -y")
+            insert(
+                "RUN apt update && apt install software-properties-common -y && add-apt-repository ppa:tomtomtom/yt-dlp && apt update && apt install ffmpeg yt-dlp -y",
+                "ENV MICRONAUT_ENVIRONMENTS=prod"
+            )
         }
+
     }
 }
 
