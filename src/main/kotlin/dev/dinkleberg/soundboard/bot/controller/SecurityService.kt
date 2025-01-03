@@ -13,7 +13,6 @@ import io.micronaut.scheduling.annotation.Async
 import jakarta.inject.Singleton
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.runBlocking
-import org.slf4j.LoggerFactory
 import java.security.NoSuchAlgorithmException
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.KeySpec

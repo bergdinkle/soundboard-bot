@@ -40,13 +40,13 @@ const val DOWNLOAD_AUDIO_CODEC = "mp3"
 open class SoundboardService(
     private val soundRepository: SoundRepository,
     private val userRepository: UserRepository,
-    private val favoriteSoundRepository: dev.dinkleberg.soundboard.bot.persistence.FavoriteSoundRepository,
+    private val favoriteSoundRepository: FavoriteSoundRepository,
     private val ffmpeg: FFmpeg,
     private val ffprobe: FFprobe,
     @Property(name = "sound.folder") private val soundFolder: String,
     @Property(name = "max-file-size") private val maxFileSize: Int,
     private val eventSoundService: EventSoundService,
-    private val youTubeDownloadService: dev.dinkleberg.soundboard.bot.soundboard.YouTubeDownloadService
+    private val youTubeDownloadService: YouTubeDownloadService
 ) {
     private val playerManager = DefaultAudioPlayerManager()
 
@@ -57,7 +57,7 @@ open class SoundboardService(
     private val player = playerManager.createPlayer()
     private val trackScheduler = TrackScheduler(player)
 
-    suspend fun listAllSounds(user: UserDto): List<dev.dinkleberg.soundboard.bot.controller.dto.SoundDto> {
+    suspend fun listAllSounds(user: UserDto): List<SoundDto> {
         val users = userRepository.findAll().toList().associateBy { it.id }
         val favorites = favoriteSoundRepository.findByUserId(user.id)
             .associateBy { it.favoriteSoundId.soundId }
@@ -75,7 +75,7 @@ open class SoundboardService(
 
     @OptIn(ExperimentalEncodingApi::class)
     @Transactional
-    open suspend fun addFileSound(user: UserDto, soundUploadDto: FileSoundUploadDto): dev.dinkleberg.soundboard.bot.controller.dto.SoundDto {
+    open suspend fun addFileSound(user: UserDto, soundUploadDto: FileSoundUploadDto): SoundDto {
         return addSound(user, soundUploadDto) { path ->
             val rawData = Base64.decode(soundUploadDto.data)
             if (rawData.size > maxFileSize) {
@@ -86,7 +86,7 @@ open class SoundboardService(
     }
 
     @Transactional
-    open suspend fun addYouTubeSound(user: UserDto, soundUploadDto: YouTubeSoundUploadDto): dev.dinkleberg.soundboard.bot.controller.dto.SoundDto {
+    open suspend fun addYouTubeSound(user: UserDto, soundUploadDto: YouTubeSoundUploadDto): SoundDto {
         return addSound(user, soundUploadDto ) { path ->
             val tmpFile = youTubeDownloadService.downloadYoutubeSound(soundUploadDto.link)
             val rawData = Files.readAllBytes(tmpFile)
@@ -98,7 +98,7 @@ open class SoundboardService(
         }
     }
 
-    open suspend fun addSound(user: UserDto, soundUploadDto: SoundUploadDto, saveAction: (path: Path) -> Unit): dev.dinkleberg.soundboard.bot.controller.dto.SoundDto {
+    open suspend fun addSound(user: UserDto, soundUploadDto: SoundUploadDto, saveAction: (path: Path) -> Unit): SoundDto {
         val id = generateIdFromName(soundUploadDto.name)
         val path = Paths.get(soundFolder, "$id.opus")
         val sound = Sound(
@@ -112,7 +112,7 @@ open class SoundboardService(
         withContext(Dispatchers.IO) {
             saveAction(path)
         }
-        return dev.dinkleberg.soundboard.bot.controller.dto.SoundDto(
+        return SoundDto(
             id = sound.id,
             name = sound.name,
             submittedById = user.id,

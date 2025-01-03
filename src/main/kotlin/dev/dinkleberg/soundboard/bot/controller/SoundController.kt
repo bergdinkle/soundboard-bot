@@ -26,7 +26,7 @@ class SoundController(
     @Get
     @Operation(summary = "List All Sounds")
     @DefaultApiResponses
-    suspend fun listAllSounds(@Header("Auth-Token") authToken: String): List<dev.dinkleberg.soundboard.bot.controller.dto.SoundDto> {
+    suspend fun listAllSounds(@Header("Auth-Token") authToken: String): List<SoundDto> {
         val user = securityService.verifyToken(authToken)
         return soundboardService.listAllSounds(user)
     }
@@ -43,7 +43,7 @@ class SoundController(
     )
     @ApiResponse(responseCode = "400")
     @ErrorApiResponses
-    suspend fun addSound(@Header("Auth-Token") authToken: String, @Body soundUploadDto: FileSoundUploadDto): dev.dinkleberg.soundboard.bot.controller.dto.SoundDto {
+    suspend fun addSound(@Header("Auth-Token") authToken: String, @Body soundUploadDto: FileSoundUploadDto): SoundDto {
         if (soundUploadDto.tags != null && soundUploadDto.tags.size > 3) {
             throw HttpStatusException(HttpStatus.BAD_REQUEST, "")
         }
@@ -63,7 +63,7 @@ class SoundController(
     )
     @ApiResponse(responseCode = "400")
     @ErrorApiResponses
-    suspend fun addYouTubeSound(@Header("Auth-Token") authToken: String, @Body soundUploadDto: YouTubeSoundUploadDto): dev.dinkleberg.soundboard.bot.controller.dto.SoundDto {
+    suspend fun addYouTubeSound(@Header("Auth-Token") authToken: String, @Body soundUploadDto: YouTubeSoundUploadDto): SoundDto {
         if (soundUploadDto.tags != null && soundUploadDto.tags.size > 3) {
             throw HttpStatusException(HttpStatus.BAD_REQUEST, "")
         }
