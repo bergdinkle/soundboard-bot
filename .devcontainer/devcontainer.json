@@ -3,14 +3,18 @@
 {
 	"name": "Java",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "eclipse-temurin:21-jdk-jammy",
+	"image": "mcr.microsoft.com/devcontainers/java:1-21",
 
 	"features": {
-		"ghcr.io/devcontainers/features/git:1": {}
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "21",
+			"installMaven": "false",
+			"installGradle": "false"
+		}
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [8080],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",
