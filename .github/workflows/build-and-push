@@ -1,0 +1,40 @@
+name: Build and Push Docker Image
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assemble dockerfile
+
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run: |
+          cd build/docker/main
+          docker build . \
+            -t ghcr.io/bergdinkle/soundboard-bot:latest \
+            -t ghcr.io/bergdinkle/soundboard-bot:${{ github.ref_name }}
+          docker push ghcr.io/bergdinkle/soundboard-bot:latest
+          docker push ghcr.io/bergdinkle/soundboard-bot:${{ github.ref_name }}
