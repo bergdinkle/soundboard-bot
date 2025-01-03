@@ -6,11 +6,6 @@
 	"image": "eclipse-temurin:21-jdk-jammy",
 
 	"features": {
-		"ghcr.io/devcontainers/features/java:1": {
-			"version": "none",
-			"installMaven": "false",
-			"installGradle": "true"
-		},
 		"ghcr.io/devcontainers/features/git:1": {}
 	},
 
