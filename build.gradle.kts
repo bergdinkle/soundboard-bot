@@ -105,4 +105,21 @@ tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative"
     jdkVersion.set("21")
 }
 
-
+tasks.named<JavaExec>("run") {
+    doFirst {
+        environment("MICRONAUT_ENVIRONMENTS", "local")
+        if (project.file(".env").exists()) {
+            file(".env").readLines().forEach {
+                if (it.isNotEmpty() && !it.startsWith("#")) {
+                    val (key, value) = it.split('=', limit = 2)
+                    if (System.getenv(key) == null) {
+                        println("Setting environment variable for $key")
+                        environment(key, value)
+                    }
+                }
+            }
+        } else {
+            println("No custom environment variables set")
+        }
+    }
+}
