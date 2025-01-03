@@ -23,12 +23,12 @@ The bot offers you the following features:
 
 ### Docker
 The easiest way to run the bot is by using Docker. You can pull the latest image from GitHub Container Registry by running:
-```bash
+```shell
 docker pull ghcr.io/bergdinkle/soundboard-bot:latest
 ```
 
 Then, you can run the bot with the following command:
-```docker
+```shell
 docker run -d --name soundboard-bot
     -e SOUNDBOARD_BOT_DISCORD_TOKEN=<your-discord-bot-token>
     -e SOUNDBOARD_BOT_TOKEN_SECRET=<some-random-secret> # You can generate this with e.g. `openssl rand -hex 32`
