@@ -18,3 +18,14 @@ sound.folder: ${SOUNDBOARD_BOT_SOUND_FOLDER}
 discord.token: ${SOUNDBOARD_BOT_DISCORD_TOKEN}
 ffmpeg-base-path: ${SOUNDBOARD_BOT_FFMPEG_BASE_PATH}
 yt-dlp-base-path: ${SOUNDBOARD_BOT_YT_DLP_BASE_PATH}
+
+micronaut:
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+
