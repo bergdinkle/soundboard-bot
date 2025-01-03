@@ -33,6 +33,6 @@ jobs:
           cd build/docker/main
           docker build . \
             -t ghcr.io/bergdinkle/soundboard-bot:latest \
-            -t ghcr.io/bergdinkle/soundboard-bot:${{ github.ref }}
+            -t ghcr.io/bergdinkle/soundboard-bot:$(echo ${{ github.ref }} | sed 's/refs\/tags\///')
           docker push ghcr.io/bergdinkle/soundboard-bot:latest
           docker push ghcr.io/bergdinkle/soundboard-bot:${{ github.ref }}
