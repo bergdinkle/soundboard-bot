@@ -31,8 +31,9 @@ jobs:
       - name: Build and push Docker image
         run: |
           cd build/docker/main
+          TAG_ID=$(echo ${{ github.ref }} | sed 's/refs\/tags\///')
           docker build . \
             -t ghcr.io/bergdinkle/soundboard-bot:latest \
-            -t ghcr.io/bergdinkle/soundboard-bot:$(echo ${{ github.ref }} | sed 's/refs\/tags\///')
+            -t ghcr.io/bergdinkle/soundboard-bot:${TAG_ID}
           docker push ghcr.io/bergdinkle/soundboard-bot:latest
-          docker push ghcr.io/bergdinkle/soundboard-bot:${{ github.ref }}
+          docker push ghcr.io/bergdinkle/soundboard-bot:${TAG_ID}
