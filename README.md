@@ -29,10 +29,10 @@ docker pull ghcr.io/bergdinkle/soundboard-bot:latest
 
 Then, you can run the bot with the following command:
 ```shell
-docker run -d --name soundboard-bot
-    -e SOUNDBOARD_BOT_DISCORD_TOKEN=<your-discord-bot-token>
-    -e SOUNDBOARD_BOT_TOKEN_SECRET=<some-random-secret> # You can generate this with e.g. `openssl rand -hex 32`
-    -p 8080:8080
+docker run -d --name soundboard-bot \
+    -e SOUNDBOARD_BOT_DISCORD_TOKEN=<your-discord-bot-token> \
+    -e SOUNDBOARD_BOT_TOKEN_SECRET=<some-random-secret> \ # You can generate this with e.g. `openssl rand -hex 32`
+    -p 8080:8080 \
     ghcr.io/bergdinkle/soundboard-bot:latest
 ```
 The logs show your new Admin token on first startup. You can use this token to log in to the web interface and manage your sounds.
