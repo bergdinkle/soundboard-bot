@@ -43,7 +43,7 @@ dependencies {
     implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.10.1")
     implementation("io.micronaut.cache:micronaut-cache-caffeine")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
     implementation("net.bramp.ffmpeg:ffmpeg:0.8.0")
