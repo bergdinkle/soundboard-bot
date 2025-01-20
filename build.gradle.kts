@@ -53,7 +53,7 @@ dependencies {
     implementation("dev.kord:kord-rest:0.14.0")
     implementation("dev.kord:kord-gateway:0.14.0")
     implementation("dev.kord:kord-core:0.15.0")
-    implementation("dev.kord:kord-voice:0.14.0")
+    implementation("dev.kord:kord-voice:0.15.0")
     implementation("dev.kord:kord-core-voice:0.15.0")
 }
 
