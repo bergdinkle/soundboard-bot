@@ -38,7 +38,7 @@ dependencies {
     runtimeOnly("io.r2dbc:r2dbc-pool:1.0.0.RELEASE")
     runtimeOnly("org.yaml:snakeyaml")
     testImplementation("io.micronaut:micronaut-http-client")
-    implementation("com.sedmelluq:lavaplayer:1.3.77")
+    implementation("com.sedmelluq:lavaplayer:1.3.78")
     implementation("io.micronaut.views:micronaut-views-freemarker")
     implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
