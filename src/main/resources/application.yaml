@@ -24,3 +24,5 @@ flyway:
   datasources:
     default:
       enabled: true
+
+auto-join: ${AUTO_JOIN:false}

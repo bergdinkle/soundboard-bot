@@ -51,6 +51,9 @@ services:
       - 8080:8080
 ```
 
+### Environemt variables
+
+- AUTO_JOIN (default false): When set to true, the bot will automatically join any channel that has 2 or more user connected.
 
 ## Screenshots
 
