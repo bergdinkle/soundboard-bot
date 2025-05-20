@@ -2,6 +2,7 @@ package dev.dinkleberg.soundboard.bot
 
 import dev.dinkleberg.soundboard.bot.controller.dto.StatusDto
 import dev.dinkleberg.soundboard.bot.soundboard.SoundboardService
+import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.event.message.MessageCreateEvent
 import dev.kord.core.event.user.VoiceStateUpdateEvent
@@ -9,24 +10,26 @@ import dev.kord.core.on
 import dev.kord.gateway.Intent
 import dev.kord.gateway.PrivilegedIntent
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.micronaut.context.annotation.Property
 import io.micronaut.context.event.ApplicationEventListener
 import io.micronaut.context.event.StartupEvent
 import jakarta.inject.Singleton
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.firstOrNull
 
 const val ERROR_MESSAGE = ":("
 
 @Singleton
 open class DiscordBot(
     private val soundboardService: SoundboardService,
-    private val kord: Kord
+    private val kord: Kord,
+    @Property(name = "auto-join") private val autoJoin: Boolean
 ) : ApplicationEventListener<StartupEvent> {
 
     private val logger = KotlinLogging.logger {}
 
     private var currentChannel: String? = null
+    private var currentChannelId: Snowflake? = null
 
     private suspend fun init() {
         kord.on<MessageCreateEvent> {
@@ -47,19 +50,40 @@ open class DiscordBot(
         kord.on<VoiceStateUpdateEvent> {
             if (kord.selfId == state.userId) {
                 currentChannel = state.getChannelOrNull()?.asChannelOrNull()?.name
+                currentChannelId = state.getChannelOrNull()?.id
             }
 
-            if (old?.channelId != null && state.channelId == null && kord.selfId == state.userId) {
+            val botLeftChannel = kord.selfId == state.userId && old?.channelId != null && state.channelId == null
+            if (botLeftChannel) {
                 logger.info { "Cleared voice connection" }
                 soundboardService.clearVoiceConnection()
             }
 
-            if (old?.channelId != null && old!!.channelId != state.channelId && kord.selfId != state.userId) {
-                val channel = old?.getChannelOrNull() ?: return@on
-
+            val userJoinedChannel = kord.selfId != state.userId && //Was not the bot
+                old?.channelId != state.channelId && //User changed channel
+                state.channelId != null //User did not disconnect
+            if (autoJoin && userJoinedChannel) {
+                val channel = state.getChannelOrNull() ?: return@on
                 val voiceStates = channel.voiceStates
 
-                if (voiceStates.firstOrNull { it.userId == kord.selfId } != null && voiceStates.count() == 1) {
+                if (voiceStates.count() >= 2) {
+                    delay(1000)
+                    val channelName = channel.asChannelOrNull()?.name
+                    logger.info { "Auto join channel $channelName" }
+                    soundboardService.joinChannel(state.getMemberOrNull() ?: return@on)
+                }
+            }
+
+            val userLeftOwnChannel = kord.selfId != state.userId && //Was not the bot
+                currentChannelId != null && //Bot is connected
+                old?.channelId == currentChannelId && //User left current channel
+                old?.channelId != state.channelId //User changed channel
+            if (userLeftOwnChannel) {
+                val channel = old?.getChannelOrNull() ?: return@on
+                val voiceStates = channel.voiceStates
+
+                if (voiceStates.count() == 1) {
+                    delay(1000)
                     logger.info { "Leaved channel because no one is connected" }
                     soundboardService.leaveChannel(playSound = false)
                 }
