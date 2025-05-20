@@ -13,6 +13,8 @@ import dev.kord.core.entity.Member
 import dev.kord.voice.AudioFrame
 import dev.kord.voice.VoiceConnection
 import io.micronaut.context.annotation.Property
+import io.micronaut.context.event.ApplicationEventListener
+import io.micronaut.context.event.StartupEvent
 import jakarta.inject.Singleton
 import jakarta.transaction.Transactional
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +49,7 @@ open class SoundboardService(
     @Property(name = "max-file-size") private val maxFileSize: Int,
     private val eventSoundService: EventSoundService,
     private val youTubeDownloadService: YouTubeDownloadService
-) {
+) : ApplicationEventListener<StartupEvent> {
     private val playerManager = DefaultAudioPlayerManager()
 
     init {
@@ -268,6 +270,14 @@ open class SoundboardService(
         val executor = FFmpegExecutor(ffmpeg, ffprobe)
         executor.createJob(builder).run()
         return tmpPath
+    }
+
+    override fun onApplicationEvent(event: StartupEvent?) {
+        val soundFolderPath = Paths.get(soundFolder)
+        if (Files.exists(soundFolderPath)) {
+            return
+        }
+        Files.createDirectory(soundFolderPath)
     }
 
 }
