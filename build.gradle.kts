@@ -55,6 +55,7 @@ dependencies {
     implementation("dev.kord:kord-core:0.17.0")
     implementation("dev.kord:kord-voice:0.17.0")
     implementation("dev.kord:kord-core-voice:0.17.0")
+    implementation("dev.schlaubi.lavakord:kord:9.1.5")
 }
 
 

@@ -2,16 +2,23 @@ package dev.dinkleberg.soundboard.bot.soundboard
 
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
+import dev.arbjerg.lavalink.protocol.v4.LoadResult
 import dev.dinkleberg.soundboard.bot.controller.dto.*
 import dev.dinkleberg.soundboard.bot.exception.FileTooLargeException
 import dev.dinkleberg.soundboard.bot.exception.SoundNotFoundException
 import dev.dinkleberg.soundboard.bot.exception.UnauthorizedException
 import dev.dinkleberg.soundboard.bot.persistence.*
 import dev.kord.common.annotation.KordVoice
+import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.connect
 import dev.kord.core.entity.Member
 import dev.kord.voice.AudioFrame
 import dev.kord.voice.VoiceConnection
+import dev.schlaubi.lavakord.audio.Link
+import dev.schlaubi.lavakord.kord.connectAudio
+import dev.schlaubi.lavakord.kord.lavakord
+import dev.schlaubi.lavakord.rest.loadItem
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micronaut.context.annotation.Property
 import io.micronaut.context.event.ApplicationEventListener
 import io.micronaut.context.event.StartupEvent
@@ -48,23 +55,24 @@ open class SoundboardService(
     @Property(name = "sound.folder") private val soundFolder: String,
     @Property(name = "max-file-size") private val maxFileSize: Int,
     private val eventSoundService: EventSoundService,
-    private val youTubeDownloadService: YouTubeDownloadService
+    private val youTubeDownloadService: YouTubeDownloadService,
+    private val kord: Kord,
 ) : ApplicationEventListener<StartupEvent> {
-    private val playerManager = DefaultAudioPlayerManager()
+
+    private val logger = KotlinLogging.logger {}
+
+    val lavalink = kord.lavakord()
 
     init {
-        AudioSourceManagers.registerLocalSource(playerManager)
+        lavalink.addNode("ws://localhost:2333", "youshallnotpass")
     }
-
-    private val player = playerManager.createPlayer()
-    private val trackScheduler = TrackScheduler(player)
 
     suspend fun listAllSounds(user: UserDto): List<SoundDto> {
         val users = userRepository.findAll().toList().associateBy { it.id }
         val favorites = favoriteSoundRepository.findByUserId(user.id)
             .associateBy { it.favoriteSoundId.soundId }
         return soundRepository.findAll().map {
-            dev.dinkleberg.soundboard.bot.controller.dto.SoundDto(
+            SoundDto(
                 id = it.id,
                 name = it.name,
                 submittedById = it.submittedBy,
@@ -198,50 +206,47 @@ open class SoundboardService(
         }
     }
 
-    @OptIn(KordVoice::class)
-    private var voiceConnection: VoiceConnection? = null
+    private var link: Link? = null
 
-    @OptIn(KordVoice::class)
     suspend fun playSound(soundId: String) {
-        if (voiceConnection == null) {
+        if (link == null || link?.state != Link.State.CONNECTED) {
             return
         }
 
         val sound = soundRepository.findById(soundId) ?: throw SoundNotFoundException(soundId)
-        playerManager.loadItem(sound.localPath, trackScheduler)
+
+        when (val item = link?.loadItem(sound.localPath)) {
+            is LoadResult.TrackLoaded -> link?.player?.playTrack(item.data)
+            else -> logger.warn { item }
+        }
     }
 
-    @OptIn(KordVoice::class)
     suspend fun joinChannel(member: Member?) {
-        voiceConnection?.shutdown()
+        link?.destroy()
 
         val channel = member?.getVoiceState()?.getChannelOrNull() ?: return
-        voiceConnection = channel.connect {
-            audioProvider { AudioFrame.fromData(player.provide()?.data) }
-        }
+        link = lavalink.getLink(member.guildId.value)
+        link?.connectAudio(channel.id)
 
         delay(500)
         playRandomSoundForEvent(Event.JOIN_SELF)
     }
 
-    @OptIn(KordVoice::class)
     suspend fun leaveChannel(playSound: Boolean = true) {
         if (playSound) {
             val played = playRandomSoundForEvent(Event.LEAVE_SELF)
             if (played) delay(3000)
         }
-        voiceConnection?.shutdown()
-        voiceConnection = null
-
+        link?.destroy()
+        link = null
     }
 
     suspend fun playRandomSoundForEvent(event: Event): Boolean {
         return eventSoundService.getRandomSoundForEvent(event)?.let { playSound(it); it } != null
     }
 
-    @OptIn(KordVoice::class)
-    fun clearVoiceConnection() {
-        voiceConnection = null
+    suspend fun clearVoiceConnection() {
+        link = null
     }
 
     @Transactional
