@@ -26,3 +26,8 @@ flyway:
       enabled: true
 
 auto-join: ${AUTO_JOIN:false}
+
+lavalink:
+  host: ${LAVALINK_HOST:lavalink}
+  port: ${LAVALINK_PORT:2333}
+  password: ${LAVALINK_PASSWORD}

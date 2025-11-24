@@ -1,22 +1,15 @@
 package dev.dinkleberg.soundboard.bot.soundboard
 
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers
 import dev.arbjerg.lavalink.protocol.v4.LoadResult
 import dev.dinkleberg.soundboard.bot.controller.dto.*
 import dev.dinkleberg.soundboard.bot.exception.FileTooLargeException
 import dev.dinkleberg.soundboard.bot.exception.SoundNotFoundException
 import dev.dinkleberg.soundboard.bot.exception.UnauthorizedException
 import dev.dinkleberg.soundboard.bot.persistence.*
-import dev.kord.common.annotation.KordVoice
-import dev.kord.core.Kord
-import dev.kord.core.behavior.channel.connect
 import dev.kord.core.entity.Member
-import dev.kord.voice.AudioFrame
-import dev.kord.voice.VoiceConnection
+import dev.schlaubi.lavakord.LavaKord
 import dev.schlaubi.lavakord.audio.Link
 import dev.schlaubi.lavakord.kord.connectAudio
-import dev.schlaubi.lavakord.kord.lavakord
 import dev.schlaubi.lavakord.rest.loadItem
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.micronaut.context.annotation.Property
@@ -56,16 +49,11 @@ open class SoundboardService(
     @Property(name = "max-file-size") private val maxFileSize: Int,
     private val eventSoundService: EventSoundService,
     private val youTubeDownloadService: YouTubeDownloadService,
-    private val kord: Kord,
+    private val lavaKord: LavaKord
+
 ) : ApplicationEventListener<StartupEvent> {
 
     private val logger = KotlinLogging.logger {}
-
-    val lavalink = kord.lavakord()
-
-    init {
-        lavalink.addNode("ws://localhost:2333", "youshallnotpass")
-    }
 
     suspend fun listAllSounds(user: UserDto): List<SoundDto> {
         val users = userRepository.findAll().toList().associateBy { it.id }
@@ -225,7 +213,7 @@ open class SoundboardService(
         link?.destroy()
 
         val channel = member?.getVoiceState()?.getChannelOrNull() ?: return
-        link = lavalink.getLink(member.guildId.value)
+        link = lavaKord.getLink(member.guildId.value)
         link?.connectAudio(channel.id)
 
         delay(500)
@@ -245,7 +233,7 @@ open class SoundboardService(
         return eventSoundService.getRandomSoundForEvent(event)?.let { playSound(it); it } != null
     }
 
-    suspend fun clearVoiceConnection() {
+    fun clearVoiceConnection() {
         link = null
     }
 
