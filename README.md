@@ -47,8 +47,21 @@ services:
     environment:
       - SOUNDBOARD_BOT_DISCORD_TOKEN=<your-discord-bot-token>
       - SOUNDBOARD_BOT_TOKEN_SECRET=<some-random-secret> # You can generate this with e.g. `openssl rand -hex 32`
+      - LAVALINK_PASSWORD=<lava-link-password>
+    volumes:
+      - "<path-to-map>:/data"
     ports:
       - 8080:8080
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:4-alpine
+    restart: unless-stopped
+    environment:
+        - _JAVA_OPTIONS=-Xmx6G
+        - SERVER_PORT=2333
+        - LAVALINK_SERVER_PASSWORD=<lava-link-password>
+        - LAVALINK_SERVER_SOURCES_LOCAL=true
+    volumes:
+        - "<path-to-map>:/data"
 ```
 
 ### Environemt variables
